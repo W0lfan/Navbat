@@ -1,0 +1,48 @@
+package BatailleNavale;
+
+import java.awt.*;
+
+public class Ship extends Canvas {
+    private int width;
+    private int height;
+    private int x;
+    private int y;
+
+    public Ship(int w, int h, int x, int y) {
+
+        if (w<=0 && h<=0) throw new IllegalArgumentException("Error: width or height of the ship must be positive.");
+
+        this.width=w;
+        this.height=h;
+        this.x=x;
+        this.y=y;
+
+
+    }
+
+    public void paint(Graphics graphics) {
+        graphics.drawString("BRUH",60,60);
+    }
+
+
+    public String toString() {
+        return String.format("Ship is size %dx%d at (%d,%d)",this.width,this.height,this.x,this.y);
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+}

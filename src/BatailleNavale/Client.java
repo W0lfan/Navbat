@@ -1,3 +1,9 @@
+package BatailleNavale;
+
+import BatailleNavale.utils.GameParameters;
+import BatailleNavale.utils.Graphical;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5,14 +11,22 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
+public class Client extends Player {
+
+    public boolean connected = false;
+
     public static void main(String[] args) {
-        try (Socket client = new Socket("192.168.38.98", 4444)) {
+        Client c = new Client();
+        GameParameters.addPlayer(c);
+        Frame f = Graphical.init(c);
+        try (Socket client = new Socket("localhost", 4444)) {
             System.out.println("Connecté au serveur !");
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             Scanner y = new Scanner(System.in);
 
+            c.connected=true;
+            c.paint(c.getGraphics());
             while (true) {
                 String receivedMessage = in.readLine();
                 if (receivedMessage != null && !receivedMessage.isEmpty()) {
@@ -26,5 +40,9 @@ public class Client {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void paint(Graphics g) {
+        Graphical.paint(g);
     }
 }
