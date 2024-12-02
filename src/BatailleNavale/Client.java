@@ -13,36 +13,35 @@ import java.util.Scanner;
 
 public class Client extends Player {
 
-    public boolean connected = false;
 
     public static void main(String[] args) {
         Client c = new Client();
         GameParameters.addPlayer(c);
-        Frame f = Graphical.init(c);
         try (Socket client = new Socket("localhost", 4444)) {
             System.out.println("Connecté au serveur !");
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             Scanner y = new Scanner(System.in);
 
-            c.connected=true;
-            c.paint(c.getGraphics());
+            c.in = in;
+            c.out = out;
+
             while (true) {
+
                 String receivedMessage = in.readLine();
                 if (receivedMessage != null && !receivedMessage.isEmpty()) {
+                    if (receivedMessage == "Ready" && c.phase != "Ready") {
+                        c.phase = "Fight";
+                        out.println("Fight");
+                        c.c2.repaint();
+                    }
                     System.out.println("Message reçu : " + receivedMessage);
                 }
-
-                String messageToSend = y.nextLine();
-                out.println(messageToSend);
-                System.out.println("Message envoyé !");
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void paint(Graphics g) {
-        Graphical.paint(g);
-    }
 }

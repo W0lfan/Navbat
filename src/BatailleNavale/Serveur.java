@@ -18,7 +18,6 @@ public class Serveur extends Player {
 
         Serveur s = new Serveur();
         GameParameters.addPlayer(s);
-        Frame f = Graphical.init(s);
         try (ServerSocket server = new ServerSocket(4444);
              Socket client = server.accept()) {
 
@@ -26,22 +25,27 @@ public class Serveur extends Player {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             Scanner y = new Scanner(System.in);
-
-            s.connected=true;
-            s.repaint();
+            s.in = in;
+            s.out = out;
 
             while (true) {
-                // Envoi de message si l'utilisateur a saisi quelque chose
-                String messageToSend = y.nextLine();
-                out.println(messageToSend);
-                System.out.println("Message envoyé !");
-
-
 
                 String receivedMessage = in.readLine();
                 if (receivedMessage != null && !receivedMessage.isEmpty()) {
+                    if ("Ready".equals(receivedMessage)) {
+                        System.out.println("STARTING FIGHT");
+                        s.phase="Fight";
+                        out.println("Fight");
+                        s.c2.repaint();
+                    }
                     System.out.println("Message reçu : " + receivedMessage);
+                    System.out.println("Message reçu : " + receivedMessage=="Ready");
+
                 }
+
+
+
+
 
 
             }

@@ -86,7 +86,8 @@ public abstract class Functionnal {
         return null;
     }
 
-    public static Integer[] nearestCase(int x, int y) {
+
+    public static Integer[] nearestCase(int x, int y, int shipWidth, int shipHeight) {
         /*
 
             I once again have to deal with this ****
@@ -108,12 +109,42 @@ public abstract class Functionnal {
         int boardXMax = boardX+width;
         int boardYMax = boardY+height;
 
+        System.out.println("-------------");
+        System.out.println("Max width : " + (x + shipWidth*caseWidth-5));
+        System.out.println("Max height : " + (y+shipHeight*caseHeight-5));
+        System.out.println("Width" + shipWidth);
+        System.out.println("Height" + shipHeight);
         if (Functionnal.withinTheRange(boardX, boardY, boardXMax, boardYMax, x, y)) {
-            System.out.println("Click in the baord");
+            System.out.println("Click in the board");
             Integer[] k = Functionnal.getCorrespondingCell(x,y);
-            return k;
+
+            if (Functionnal.withinTheRange(
+                    boardX, boardY, boardXMax, boardYMax, k[0] + shipWidth*caseWidth-1, k[1] + shipHeight*caseHeight-1
+            )) {
+                return k;
+            }
+            return null;
         }
 
         return null;
+    }
+
+    public static Integer[] cellViaCoordinates(int canvasX, int canvasY) {
+        int adjustedCanvasX = canvasX-GameParameters.caseWidth;
+        int adjustedCanvasY = canvasY-GameParameters.caseHeight;
+
+        // 400 = 10
+
+        Integer[] k = {
+           adjustedCanvasX*10/400+1,
+                adjustedCanvasY*10/400+1
+        };
+
+        return k;
+    }
+
+    public static String cellGameViaCoordinates(int y, int x) {
+        String ALPHA = "ABCDEFGHIJ";
+        return String.format("%c%d",ALPHA.charAt(x-1),y);
     }
 }

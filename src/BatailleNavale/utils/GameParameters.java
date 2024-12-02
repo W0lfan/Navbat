@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public abstract class GameParameters {
     public static int boardWidth = 10;
     public static int boardHeight = 10;
-    public static int windowWidth = 700;
+    public static int windowWidth = 1080;
     public static int windowHeight = 700;
 
     private static String phase = "Placement";
@@ -39,6 +39,7 @@ public abstract class GameParameters {
 
     public static void updatePhase(String p) {
       if (Functionnal.availableInPhases(p)) {
+          System.out.println("Changing game phase");
           GameParameters.phase = p;
       } else {
           throw new IllegalArgumentException("Error: the phase you are trying to go to doesn't exist.");
@@ -46,9 +47,6 @@ public abstract class GameParameters {
     }
 
     public static Integer[][] shipsSize = {
-            {1,1},
-            {1,2},
-            {2,1},
-            {3,1}
+            {2,3}, {1,1},{3,3}
     } ;
 }
