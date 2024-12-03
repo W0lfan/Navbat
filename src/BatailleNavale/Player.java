@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Function;
 
 
@@ -17,9 +18,7 @@ import java.util.function.Function;
 public class Player extends Canvas {
     public ArrayList<Ship> ships = new ArrayList<>();
     public ArrayList<String> busyCells = new ArrayList<>();
-    public GameBoard gameboard = new GameBoard();
-    public boolean connected = false;
-    public String phase = "";
+    public String phase = "Placement";
 
     public BufferedReader in;
     public PrintWriter out;
@@ -27,14 +26,21 @@ public class Player extends Canvas {
     public Canvas c1;
     public Canvas c2;
 
+    private final int playerID;
 
-    public Player() {
-        Frame f = new Frame();
 
-        f.setSize(GameParameters.windowWidth, GameParameters.windowHeight);
-        f.setLayout(new GridLayout(1, 2));
+    public int getPlayerID() {
+        return this.playerID;
+    }
 
+    public Player(int id) {
         Player t = this;
+        /*
+            Ici l'usage de variable statique pour incrémenter l'ID posait problème,
+            alors j'ai décidé de directement faire en sorte que le code choisisse l'ID
+            via le constructeur
+         */
+        this.playerID=id;
 
         Canvas canvas1 = new Canvas() {
             @Override
@@ -50,9 +56,8 @@ public class Player extends Canvas {
                         String.format("Phase: %s", GameParameters.getPhase()),
                         GameParameters.paddingRight, GameParameters.windowHeight - 50
                 );
-                if (GameParameters.getPhase() == "Placement") {
+                if (t.phase == "Placement") {
                     g.setColor(Color.BLACK);
-                    System.out.println(t.ships);
                     if (t.ships.size() < GameParameters.shipsSize.length) {
                         g.drawString("Veuillez placer le bateau suivant:",GameParameters.paddingRight, 50);
                         Integer[] size = Functionnal.missingShip(t);
@@ -62,14 +67,30 @@ public class Player extends Canvas {
                     } else {
                         g.drawString("EN ATTENTE DU JOUEUR ENNEMI",GameParameters.paddingRight, 50);
                         out.println("Ready");
+                        t.phase="Fight";
+                        System.out.println("Message ready envoyé");
+                        this.repaint();
                     }
-                } else if (t.phase == "Fight") {
-                    g.drawString("EN COMBAT!",GameParameters.paddingRight, 50);
-                    this.repaint();
+                } else if (t.phase == "Fight" ) {
+                    System.out.println("Drawing fight");
+                    if (GameParameters.amIPlaying(t)) {
+                        g.drawString("EN COMBAT! Choisissez une case",GameParameters.paddingRight, GameParameters.windowHeight-200);
+                    } else {
+                        g.drawString("EN COMBAT! Votre ennemi choisi une case",GameParameters.paddingRight, GameParameters.windowHeight-200);
+                    }
+                    Graphical.paintGrid(
+                            g, null
+                    );
                 }
 
             }
         };
+
+
+        Frame f = new Frame();
+
+        f.setSize(GameParameters.windowWidth, GameParameters.windowHeight);
+        f.setLayout(new GridLayout(1, 2));
 
         canvas1.setBackground(Color.LIGHT_GRAY);
         canvas2.setBackground(Color.WHITE);
@@ -94,7 +115,34 @@ public class Player extends Canvas {
 
                 Integer[] nearestCase = Functionnal.nearestCase(e.getX(), e.getY(),size[0],size[1] );
                 if (nearestCase != null) {
-                    System.out.println("Nearest case is " + nearestCase[0] + " " + nearestCase[1]);
+                    Integer[] cellsCoordinates =  Functionnal.cellViaCoordinates(e.getX(), e.getY());
+                    String charCode = Functionnal.cellGameViaCoordinates(cellsCoordinates[0],cellsCoordinates[1]);
+                    System.out.println(charCode);
+                    if (!t.busyCells.contains(charCode)) {
+                        try {
+                            t.addShip(
+                                    size[0],size[1],
+                                    cellsCoordinates[0],cellsCoordinates[1],
+                                    charCode
+                            );
+                            canvas2.repaint();
+                        } catch (ShipPilingUp ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                }
+                canvas1.repaint();
+            }
+        });
+
+
+        canvas2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                System.out.println(String.format("Click on (%d,%d)", e.getX(), e.getY()));
+                Integer[] size = Functionnal.missingShip(t);
+
+                Integer[] nearestCase = Functionnal.nearestCase(e.getX(), e.getY(),size[0],size[1] );
+                if (nearestCase != null) {
                     Integer[] cellsCoordinates =  Functionnal.cellViaCoordinates(e.getX(), e.getY());
                     String charCode = Functionnal.cellGameViaCoordinates(cellsCoordinates[0],cellsCoordinates[1]);
                     System.out.println(charCode);

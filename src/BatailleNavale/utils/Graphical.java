@@ -8,13 +8,6 @@ import java.awt.*;
 
 public abstract class Graphical {
 
-
-    public static void displayConnectionStatus(Graphics graphics) {
-        graphics.setColor(Color.GREEN);
-        graphics.drawString("Connected",0,0);
-    }
-
-
     public static void paintShip(int width, int height, int x, int y, Graphics g) {
         int caseWidth = GameParameters.caseWidth;
         int caseHeight = GameParameters.caseHeight;
@@ -28,7 +21,6 @@ public abstract class Graphical {
             }
         }
     }
-
 
     public static void paintGrid(Graphics g, Player player) {
         int paddingTop = GameParameters.paddingTop;
@@ -63,14 +55,16 @@ public abstract class Graphical {
             }
         }
 
-        for (Ship s : player.ships) {
-            Graphical.paintShip(
-                    s.getWidth(),
-                    s.getHeight(),
-                    paddingRight+(s.getX()-1)*caseWidth,
-                    paddingTop+(s.getY()-1)*caseHeight,
-                    g
-            );
+        if (player != null) {
+            for (Ship s : player.ships) {
+                Graphical.paintShip(
+                        s.getWidth(),
+                        s.getHeight(),
+                        paddingRight+(s.getX()-1)*caseWidth,
+                        paddingTop+(s.getY()-1)*caseHeight,
+                        g
+                );
+            }
         }
     }
 

@@ -13,6 +13,11 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Serveur extends Player {
+    public Serveur() {
+        super(0); // Ensure the parent constructor is called
+        System.out.println("Server created with ID: " + getPlayerID());
+    }
+
 
     public static void main(String[] args) {
 
@@ -36,11 +41,10 @@ public class Serveur extends Player {
                         System.out.println("STARTING FIGHT");
                         s.phase="Fight";
                         out.println("Fight");
-                        s.c2.repaint();
+                        System.out.println("Repainted");
                     }
                     System.out.println("Message reçu : " + receivedMessage);
-                    System.out.println("Message reçu : " + receivedMessage=="Ready");
-
+                    System.out.println("Message reçu : " + "Ready".equals(receivedMessage));
                 }
 
 

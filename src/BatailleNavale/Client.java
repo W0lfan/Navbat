@@ -12,7 +12,10 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client extends Player {
-
+    public Client() {
+        super(1); // Ensure the parent constructor is called
+        System.out.println("Server created with ID: " + getPlayerID());
+    }
 
     public static void main(String[] args) {
         Client c = new Client();
@@ -33,7 +36,6 @@ public class Client extends Player {
                     if (receivedMessage == "Ready" && c.phase != "Ready") {
                         c.phase = "Fight";
                         out.println("Fight");
-                        c.c2.repaint();
                     }
                     System.out.println("Message reçu : " + receivedMessage);
                 }

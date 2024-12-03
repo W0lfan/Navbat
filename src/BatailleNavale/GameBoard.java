@@ -3,19 +3,22 @@ package BatailleNavale;
 import BatailleNavale.utils.Graphical;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameBoard extends Canvas {
-    private final List<Rectangle> filledRectangles = new ArrayList<>();
 
-    public void addRectangle(int x, int y, int width, int height) {
-        filledRectangles.removeAll(filledRectangles);
-        filledRectangles.add(new Rectangle(x, y, width, height));
-    }
+    ArrayList<Ship> ships = new ArrayList<>();
 
-    public List<Rectangle> getRect() {
-        return this.filledRectangles;
+
+
+
+
+
+
+    public void addShips(ArrayList<Ship> ships) {
+        this.ships = ships;
     }
 
 

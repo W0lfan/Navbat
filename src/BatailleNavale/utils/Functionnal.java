@@ -4,6 +4,7 @@ import BatailleNavale.Player;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Functionnal {
     public static boolean listContainsElementOfOtherList(
@@ -109,13 +110,8 @@ public abstract class Functionnal {
         int boardXMax = boardX+width;
         int boardYMax = boardY+height;
 
-        System.out.println("-------------");
-        System.out.println("Max width : " + (x + shipWidth*caseWidth-5));
-        System.out.println("Max height : " + (y+shipHeight*caseHeight-5));
-        System.out.println("Width" + shipWidth);
-        System.out.println("Height" + shipHeight);
+
         if (Functionnal.withinTheRange(boardX, boardY, boardXMax, boardYMax, x, y)) {
-            System.out.println("Click in the board");
             Integer[] k = Functionnal.getCorrespondingCell(x,y);
 
             if (Functionnal.withinTheRange(
@@ -141,6 +137,16 @@ public abstract class Functionnal {
         };
 
         return k;
+    }
+
+    public static HashMap<String,Boolean> getAllCellGameViaCoordinates(int x, int y, int width, int height) {
+        HashMap<String,Boolean> $ = new HashMap<>();
+        for (int i = x; i < x+width; i++) {
+            for (int j=y; j < y+height; j++) {
+                $.put(cellGameViaCoordinates(i,j),false);
+            }
+        }
+        return $;
     }
 
     public static String cellGameViaCoordinates(int y, int x) {
