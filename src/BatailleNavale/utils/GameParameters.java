@@ -41,7 +41,25 @@ public abstract class GameParameters {
     }
 
     public static void addShipsToGameBoard(Player p) {
-        GameBoard g = gameBoards.get(p.getPlayerID());
+        GameBoard g = getGameBoardOfPlayer(p);
+        if (g.getShipsLength() == 0) {
+            for (Ship s : p.ships) {
+                g.addShip(s);
+            }
+            gameBoards.put(p.getPlayerID(),g);
+        }
+    }
+
+    public static void repaintAll() {
+        for (int i = 0 ; i < players.size(); i++) {
+            Player $ = players.get(i);
+            $.c1.repaint();
+            $.c2.repaint();
+        }
+    }
+
+    public static GameBoard getGameBoardOfPlayer(Player p) {
+        return gameBoards.get(p.getPlayerID());
     }
 
     public static String getPhase() {
@@ -57,9 +75,10 @@ public abstract class GameParameters {
         } else {
             playingPlayer=1;
         }
+        System.out.println("Switched player players to " + playingPlayer);
     }
-    public static boolean amIPlaying(Player p) {
-        return p.getPlayerID() == playingPlayer;
+    public static boolean amIPlaying(int id) {
+        return id == playingPlayer;
     }
 
 
@@ -69,4 +88,6 @@ public abstract class GameParameters {
     public static Integer[][] shipsSize = {
             {1,5}
     } ;
+
+
 }

@@ -53,7 +53,7 @@ public class Player extends Canvas {
             @Override
             public void paint(Graphics g) {
                 g.drawString(
-                        String.format("Phase: %s", GameParameters.getPhase()),
+                        String.format("Phase: %s", t.phase),
                         GameParameters.paddingRight, GameParameters.windowHeight - 50
                 );
                 if (t.phase == "Placement") {
@@ -72,10 +72,13 @@ public class Player extends Canvas {
                         this.repaint();
                     }
                 } else if (t.phase == "Fight" ) {
+                    GameParameters.addShipsToGameBoard(t);
                     System.out.println("Drawing fight");
-                    if (GameParameters.amIPlaying(t)) {
+                    if (GameParameters.amIPlaying(getPlayerID())) {
+                        System.out.println("PLACED IN WAIT LIST");
                         g.drawString("EN COMBAT! Choisissez une case",GameParameters.paddingRight, GameParameters.windowHeight-200);
                     } else {
+                        System.out.println("LEFT WAIT LIST");
                         g.drawString("EN COMBAT! Votre ennemi choisi une case",GameParameters.paddingRight, GameParameters.windowHeight-200);
                     }
                     Graphical.paintGrid(
@@ -138,34 +141,31 @@ public class Player extends Canvas {
 
         canvas2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                System.out.println(String.format("Click on (%d,%d)", e.getX(), e.getY()));
-                Integer[] size = Functionnal.missingShip(t);
-
-                Integer[] nearestCase = Functionnal.nearestCase(e.getX(), e.getY(),size[0],size[1] );
-                if (nearestCase != null) {
+                if (GameParameters.amIPlaying(getPlayerID())) {
+                    System.out.println(String.format("Click on (%d,%d)", e.getX(), e.getY()));
                     Integer[] cellsCoordinates =  Functionnal.cellViaCoordinates(e.getX(), e.getY());
                     String charCode = Functionnal.cellGameViaCoordinates(cellsCoordinates[0],cellsCoordinates[1]);
-                    System.out.println(charCode);
-                    if (!t.busyCells.contains(charCode)) {
-                        try {
-                            t.addShip(
-                                    size[0],size[1],
-                                    cellsCoordinates[0],cellsCoordinates[1],
-                                    charCode
-                            );
-                            canvas2.repaint();
-                        } catch (ShipPilingUp ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
+                    System.out.println("Clicked on case " + charCode);
+                    out.println(charCode);
                 }
-                canvas1.repaint();
             }
         });
 
         f.setVisible(true);
     }
 
+
+    public boolean manageShot(String pos) {
+        GameBoard g = GameParameters.getGameBoardOfPlayer(this);
+        int i = g.shipIndexInBoard(pos);
+        if (i != -1) {
+            System.out.println("Ship not missed");
+            boolean iShot = g.setShipShot(i,pos);
+            return iShot;
+        }
+        System.out.println("Ship missed: doesn't exist");
+        return true;
+    }
 
     public void addShip(int width, int height, int x, int y, String p) throws ShipPilingUp {
         if (this.shipPilesUp(width, height, x, y)) throw new ShipPilingUp(width,height,x,y);
@@ -175,6 +175,31 @@ public class Player extends Canvas {
         };
     }
 
+    public void manageWhile(BufferedReader in) throws IOException {
+            String receivedMessage = in.readLine();
+            if (receivedMessage != null && !receivedMessage.isEmpty()) {
+                if (receivedMessage == "Ready" && this.phase != "Ready") {
+                    this.phase = "Fight";
+                    out.println("Fight");
+                }
+                if (GameParameters.amIPlaying(getPlayerID())) {
+                    System.out.println("Looking out for shot...");
+                    if (!GameParameters.amIPlaying(this.getPlayerID())) {
+                        System.out.println("CANCELLED : CANNOT PLAY");
+                    } else {
+                        boolean shootOK = this.manageShot(receivedMessage);
+                        if (shootOK) {
+                            GameParameters.newPlayingPlayer();
+                            GameParameters.repaintAll();
+                        }
+                    }
+                }
+
+
+                System.out.println("Message reçu : " + receivedMessage);
+            }
+
+    }
 
     public boolean shipPilesUp(int width, int height, int x, int y) {
         int i = 0;

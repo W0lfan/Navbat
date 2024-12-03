@@ -153,4 +153,10 @@ public abstract class Functionnal {
         String ALPHA = "ABCDEFGHIJ";
         return String.format("%c%d",ALPHA.charAt(x-1),y);
     }
+
+    public static Integer[] coordinatesViaCellGame(String c) {
+        String ALPHA = "ABCDEFGHIJ";
+        Integer[] i = {ALPHA.indexOf(c.charAt(0)), Integer.parseInt(Character.toString(c.charAt(1)))};
+        return i;
+    }
 }

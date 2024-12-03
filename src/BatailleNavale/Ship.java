@@ -12,7 +12,6 @@ public class Ship extends Canvas {
     private int x;
     private int y;
     private String defBoard;
-
     private HashMap<String,Boolean> occupiedCells = new HashMap<>();
 
 
@@ -36,6 +35,9 @@ public class Ship extends Canvas {
         graphics.drawString("BRUH",60,60);
     }
 
+    public HashMap<String,Boolean> getOccupiedCells() {
+        return this.occupiedCells;
+    }
 
     public String toString() {
         return String.format("Ship is size %dx%d at (%d,%d)\nOccupying cells:%s",this.width,this.height,this.x,this.y, this.occupiedCells.toString());
@@ -58,6 +60,8 @@ public class Ship extends Canvas {
     public int getHeight() {
         return this.height;
     }
+
+
 
     public boolean isShot(String cell) {
         if (this.occupiedCells.get(cell) == null || this.occupiedCells.get(cell)) {

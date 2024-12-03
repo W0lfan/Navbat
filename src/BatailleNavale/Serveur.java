@@ -29,29 +29,11 @@ public class Serveur extends Player {
             System.out.println("BatailleNavale.Client connecté !");
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-            Scanner y = new Scanner(System.in);
             s.in = in;
             s.out = out;
 
             while (true) {
-
-                String receivedMessage = in.readLine();
-                if (receivedMessage != null && !receivedMessage.isEmpty()) {
-                    if ("Ready".equals(receivedMessage)) {
-                        System.out.println("STARTING FIGHT");
-                        s.phase="Fight";
-                        out.println("Fight");
-                        System.out.println("Repainted");
-                    }
-                    System.out.println("Message reçu : " + receivedMessage);
-                    System.out.println("Message reçu : " + "Ready".equals(receivedMessage));
-                }
-
-
-
-
-
-
+                s.manageWhile(in);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

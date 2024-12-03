@@ -5,6 +5,8 @@ import BatailleNavale.Player;
 import BatailleNavale.Ship;
 
 import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public abstract class Graphical {
 
@@ -13,6 +15,7 @@ public abstract class Graphical {
         int caseHeight = GameParameters.caseHeight;
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
+
                 g.fillRect(
                         x+caseWidth*i,
                         y+caseHeight*j,
@@ -55,7 +58,23 @@ public abstract class Graphical {
             }
         }
 
+
         if (player != null) {
+            GameBoard gameBoard = GameParameters.getGameBoardOfPlayer(player);
+            if (gameBoard != null) {
+                ArrayList<String> m = gameBoard.getMiss();
+                for (String missCell : m) {
+                    Integer[] xY = Functionnal.coordinatesViaCellGame(missCell);
+                    g.drawRect(
+                            paddingRight + xY[0] * caseWidth,
+                            paddingTop + xY[1] * caseHeight,
+                            caseWidth,
+                            caseHeight
+                    );
+                }
+            }
+
+
             for (Ship s : player.ships) {
                 Graphical.paintShip(
                         s.getWidth(),

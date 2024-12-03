@@ -30,17 +30,8 @@ public class Client extends Player {
             c.out = out;
 
             while (true) {
-
-                String receivedMessage = in.readLine();
-                if (receivedMessage != null && !receivedMessage.isEmpty()) {
-                    if (receivedMessage == "Ready" && c.phase != "Ready") {
-                        c.phase = "Fight";
-                        out.println("Fight");
-                    }
-                    System.out.println("Message reçu : " + receivedMessage);
-                }
+                c.manageWhile(in);
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
